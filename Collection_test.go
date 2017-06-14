@@ -16,8 +16,18 @@ func (db *SomeDatabase) Set(table string, id string, obj interface{}) error {
 	return nil
 }
 
-func (db *SomeDatabase) TypeOfTable(table string) reflect.Type {
-	return reflect.TypeOf(new(SomeList)).Elem()
+func (db *SomeDatabase) Delete(table string, id string) (bool, error) {
+	return false, nil
+}
+
+func (db *SomeDatabase) Type(table string) reflect.Type {
+	return reflect.TypeOf((*SomeList)(nil)).Elem()
+}
+
+func (db *SomeDatabase) Types() map[string]reflect.Type {
+	return map[string]reflect.Type{
+		"SomeList": reflect.TypeOf((*SomeList)(nil)).Elem(),
+	}
 }
 
 type SomeList struct {
