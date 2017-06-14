@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -13,6 +14,10 @@ func (db *SomeDatabase) Get(table string, id string) (interface{}, error) {
 
 func (db *SomeDatabase) Set(table string, id string, obj interface{}) error {
 	return nil
+}
+
+func (db *SomeDatabase) TypeOfTable(table string) reflect.Type {
+	return reflect.TypeOf(new(SomeList)).Elem()
 }
 
 type SomeList struct {
@@ -40,9 +45,8 @@ func (list *SomeList) Save() error {
 }
 
 func TestGet(t *testing.T) {
-	list := &SomeList{}
 	db := &SomeDatabase{}
 	api := New("/api/", db)
-	route, handler := api.Get(list)
+	route, handler := api.Get("SomeList")
 	fmt.Println(route, handler)
 }

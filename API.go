@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"reflect"
 	"strings"
 
 	"github.com/aerogo/aero"
@@ -22,21 +21,29 @@ func New(root string, db Database) *API {
 	}
 }
 
-// Get ...
-func (api *API) Get(example interface{}) (string, aero.Handle) {
-	listType := reflect.TypeOf(example).Elem()
-	listTypeName := listType.Name()
+// Install ...
+func (api *API) Install(app *aero.Application) {
+	for table := range api.db.Types() {
+		route, handler := api.Get(table)
+		app.Get(route, handler)
+	}
+}
 
-	route := api.root + strings.ToLower(listTypeName) + "/:id"
+// Get ...
+func (api *API) Get(table string) (string, aero.Handle) {
+	objType := api.db.Type(table)
+	objTypeName := objType.Name()
+
+	route := api.root + strings.ToLower(objTypeName) + "/:id"
 	handler := func(ctx *aero.Context) string {
-		listID := ctx.Get("id")
-		list, err := api.db.Get(listTypeName, listID)
+		objID := ctx.Get("id")
+		obj, err := api.db.Get(objTypeName, objID)
 
 		if err != nil {
 			return ctx.Error(http.StatusNotFound, "Not found", err)
 		}
 
-		return ctx.JSON(list)
+		return ctx.JSON(obj)
 	}
 
 	return route, handler
