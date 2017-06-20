@@ -75,6 +75,12 @@ func (api *API) CollectionHandler(objTypeName string, modify CollectionModificat
 
 		body := ctx.RequestBody()
 		coll := obj.(Collection)
+		err = coll.Authorize(ctx)
+
+		if err != nil {
+			return ctx.Error(http.StatusForbidden, "Not authorized", err)
+		}
+
 		item := coll.TransformBody(body)
 
 		err = modify(coll, item)
