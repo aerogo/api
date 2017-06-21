@@ -126,8 +126,8 @@ func (api *API) Install(app *aero.Application) {
 
 			app.Get(route, handler)
 
-			// Post
-			route = api.root + strings.ToLower(collectionTypeName) + "/:id/edit/:item"
+			// Update
+			route = api.root + strings.ToLower(collectionTypeName) + "/:id/update/:item"
 			handler = func(ctx *aero.Context) string {
 				var collectionObj, item interface{}
 				var err error
@@ -153,10 +153,10 @@ func (api *API) Install(app *aero.Application) {
 				item = collection.TransformBody(body)
 
 				// Edit
-				err = collection.Set(itemID, item)
+				err = collection.Update(itemID, item)
 
 				if err != nil {
-					return ctx.Error(http.StatusNotFound, "Item could not be edited", err)
+					return ctx.Error(http.StatusBadRequest, "Item could not be edited", err)
 				}
 
 				// Save

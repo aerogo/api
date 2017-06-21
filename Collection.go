@@ -12,6 +12,7 @@ type Collection interface {
 
 	Get(id interface{}) (interface{}, error)
 	Set(id interface{}, value interface{}) error
+	Update(id interface{}, updates interface{}) error
 
 	// TransformBody returns an item that is passed to methods like Add, Remove, etc.
 	TransformBody(body []byte) interface{}
