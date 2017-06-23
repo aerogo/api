@@ -32,6 +32,13 @@ func (api *API) Install(app *aero.Application) {
 		route, handler := api.Get(table)
 		app.Get(route, handler)
 
+		// POST route
+		route, handler = api.Post(table)
+
+		if route != "" && handler != nil {
+			app.Post(route, handler)
+		}
+
 		// Collections
 		if reflect.PtrTo(objType).Implements(collection) {
 			// Add
@@ -150,7 +157,7 @@ func (api *API) Install(app *aero.Application) {
 
 				itemID := ctx.Get("item")
 				body := ctx.RequestBody()
-				item = collection.TransformBody(body)
+				item = collection.PostBody(body)
 
 				// Edit
 				err = collection.Update(itemID, item)
@@ -198,7 +205,6 @@ func (api *API) CollectionHandler(objTypeName string, modify CollectionModificat
 			return ctx.Error(http.StatusNotFound, "Collection not found", err)
 		}
 
-		body := ctx.RequestBody()
 		collection := obj.(Collection)
 		err = collection.Authorize(ctx)
 
@@ -206,7 +212,8 @@ func (api *API) CollectionHandler(objTypeName string, modify CollectionModificat
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
 		}
 
-		item := collection.TransformBody(body)
+		body := ctx.RequestBody()
+		item := collection.PostBody(body)
 
 		err = modify(collection, item)
 
@@ -250,6 +257,56 @@ func (api *API) Get(table string) (string, aero.Handle) {
 		}
 
 		return ctx.JSON(obj)
+	}
+
+	return route, handler
+}
+
+// Post ...
+func (api *API) Post(table string) (string, aero.Handle) {
+	objType := api.db.Type(table)
+	objTypeName := objType.Name()
+	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
+
+	if !reflect.PtrTo(objType).Implements(editableInterface) {
+		return "", nil
+	}
+
+	route := api.root + strings.ToLower(objTypeName) + "/:id"
+	handler := func(ctx *aero.Context) string {
+		objID := ctx.Get("id")
+		obj, err := api.db.Get(objTypeName, objID)
+
+		if err != nil {
+			return ctx.Error(http.StatusNotFound, "Not found", err)
+		}
+
+		// Authorize
+		editable := obj.(Editable)
+		err = editable.Authorize(ctx)
+
+		if err != nil {
+			return ctx.Error(http.StatusForbidden, "Not authorized", err)
+		}
+
+		body := ctx.RequestBody()
+		data := editable.PostBody(body)
+
+		// Edit
+		err = editable.Update(data)
+
+		if err != nil {
+			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be updated", err)
+		}
+
+		// Save
+		err = editable.Save()
+
+		if err != nil {
+			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
+		}
+
+		return "ok"
 	}
 
 	return route, handler
