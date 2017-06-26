@@ -365,7 +365,7 @@ func (api *API) Create(table string) (string, aero.Handle) {
 		}
 
 		// Create
-		err = creatable.Create(body)
+		err = creatable.Create(data, ctx)
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be created", err)
