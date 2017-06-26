@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"reflect"
 	"strings"
@@ -34,12 +35,19 @@ func (api *API) Install(app *aero.Application) {
 
 // RegisterTable registers a single table.
 func (api *API) RegisterTable(app *aero.Application, table string, objType reflect.Type) {
-	// Retrieve data
+	// Retrieve
 	route, handler := api.Get(table)
 	app.Get(route, handler)
 
-	// Update data
+	// Update
 	route, handler = api.Update(table)
+
+	if route != "" && handler != nil {
+		app.Post(route, handler)
+	}
+
+	// Create
+	route, handler = api.Create(table)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
@@ -294,8 +302,15 @@ func (api *API) Update(table string) (string, aero.Handle) {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
 		}
 
+		// Parse body
 		body := ctx.RequestBody()
-		data := editable.PostBody(body)
+
+		var data interface{}
+		err = json.Unmarshal(body, &data)
+
+		if err != nil {
+			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)
+		}
 
 		// Edit
 		err = editable.Update(data)
@@ -306,6 +321,58 @@ func (api *API) Update(table string) (string, aero.Handle) {
 
 		// Save
 		err = editable.Save()
+
+		if err != nil {
+			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
+		}
+
+		return "ok"
+	}
+
+	return route, handler
+}
+
+// Create ...
+func (api *API) Create(table string) (string, aero.Handle) {
+	objType := api.db.Type(table)
+	objTypeName := objType.Name()
+	creatableInterface := reflect.TypeOf((*Creatable)(nil)).Elem()
+
+	if !reflect.PtrTo(objType).Implements(creatableInterface) {
+		return "", nil
+	}
+
+	route := api.root + strings.ToLower(objTypeName) + "/new"
+	handler := func(ctx *aero.Context) string {
+		obj := reflect.New(objType).Interface()
+		creatable := obj.(Creatable)
+
+		// Authorize
+		err := creatable.Authorize(ctx)
+
+		if err != nil {
+			return ctx.Error(http.StatusForbidden, "Not authorized", err)
+		}
+
+		// Parse body
+		body := ctx.RequestBody()
+
+		var data interface{}
+		err = json.Unmarshal(body, &data)
+
+		if err != nil {
+			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)
+		}
+
+		// Create
+		err = creatable.Create(body)
+
+		if err != nil {
+			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be created", err)
+		}
+
+		// Save
+		err = creatable.Save()
 
 		if err != nil {
 			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)

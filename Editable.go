@@ -4,6 +4,5 @@ package api
 type Editable interface {
 	Authorizable
 	Savable
-	Updatable
-	PostBodyReader
+	Update(data interface{}) error
 }
