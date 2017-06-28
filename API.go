@@ -313,7 +313,7 @@ func (api *API) Update(table string) (string, aero.Handle) {
 		}
 
 		// Edit
-		err = editable.Update(data)
+		err = editable.Update(ctx, data)
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be updated", err)
