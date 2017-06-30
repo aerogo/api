@@ -6,5 +6,5 @@ import "github.com/aerogo/aero"
 type Creatable interface {
 	Savable
 	Authorizable
-	Create(data interface{}, ctx *aero.Context) error
+	Create(ctx *aero.Context) error
 }

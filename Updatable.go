@@ -2,8 +2,8 @@ package api
 
 import "github.com/aerogo/aero"
 
-// An Editable can authorize changes, be changed and be saved in the database.
-type Editable interface {
+// An Updatable can authorize changes, be changed and be saved in the database.
+type Updatable interface {
 	Authorizable
 	Savable
 	Update(ctx *aero.Context, data interface{}) error
