@@ -33,6 +33,9 @@ func (api *API) Get(table string) (string, aero.Handle) {
 			}
 		}
 
+		// Allow CORS
+		ctx.SetResponseHeader("Access-Control-Allow-Origin", "*")
+
 		return ctx.JSON(obj)
 	}
 
