@@ -18,7 +18,7 @@ func (api *API) Create(table string) (string, aero.Handle) {
 		return "", nil
 	}
 
-	route := api.root + strings.ToLower(objTypeName) + "/new"
+	route := api.root + "new/" + strings.ToLower(objTypeName)
 	handler := func(ctx *aero.Context) string {
 		obj := reflect.New(objType).Interface()
 		creatable := obj.(Creatable)
