@@ -49,6 +49,13 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 		app.Post(route, handler)
 	}
 
+	// Actions
+	route, handler = api.Actions(table)
+
+	if route != "" && handler != nil {
+		app.Post(route, handler)
+	}
+
 	// Collections
 	if reflect.PtrTo(objType).Implements(collectionInterface) {
 		api.RegisterCollection(app, table)
