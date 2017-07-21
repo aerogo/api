@@ -46,7 +46,7 @@ func (api *API) CollectionHandler(objTypeName string, modify CollectionModificat
 		err = modify(collection, item)
 
 		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, "Error adding item to list", err)
+			return ctx.Error(http.StatusInternalServerError, "Error modifying list item", err)
 		}
 
 		err = collection.Save()
