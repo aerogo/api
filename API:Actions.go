@@ -8,9 +8,9 @@ import (
 	"github.com/aerogo/aero"
 )
 
-// Action ...
-func (api *API) Action(table string, action *Action) (string, aero.Handle) {
-	objType := api.db.Type(table)
+// ActionHandler ...
+func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
+	objType := api.db.Type(action.Table)
 	objTypeName := objType.Name()
 	actionableInterface := reflect.TypeOf((*Actionable)(nil)).Elem()
 

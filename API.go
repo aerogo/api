@@ -10,15 +10,9 @@ var collectionInterface = reflect.TypeOf((*Collection)(nil)).Elem()
 
 // API ...
 type API struct {
-	root                string
-	db                  Database
-	actionRegistrations []*ActionRegistration
-}
-
-// ActionRegistration ...
-type ActionRegistration struct {
-	Table  string
-	Action *Action
+	root    string
+	db      Database
+	actions []*Action
 }
 
 // New creates a new API.
@@ -35,8 +29,8 @@ func (api *API) Install(app *aero.Application) {
 		api.RegisterTable(app, table, objType)
 	}
 
-	for _, reg := range api.actionRegistrations {
-		route, handler := api.Action(reg.Table, reg.Action)
+	for _, action := range api.actions {
+		route, handler := api.ActionHandler(action)
 		app.Post(route, handler)
 	}
 }
@@ -68,9 +62,11 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 }
 
 // RegisterAction registers an action for a table.
-func (api *API) RegisterAction(table string, action *Action) {
-	api.actionRegistrations = append(api.actionRegistrations, &ActionRegistration{
-		Table:  table,
-		Action: action,
-	})
+func (api *API) RegisterAction(action *Action) {
+	api.actions = append(api.actions, action)
+}
+
+// RegisterActions registers actions for a table.
+func (api *API) RegisterActions(actions []*Action) {
+	api.actions = append(api.actions, actions...)
 }
