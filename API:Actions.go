@@ -8,8 +8,8 @@ import (
 	"github.com/aerogo/aero"
 )
 
-// Actions ...
-func (api *API) Actions(table string) (string, aero.Handle) {
+// Action ...
+func (api *API) Action(table string, action *Action) (string, aero.Handle) {
 	objType := api.db.Type(table)
 	objTypeName := objType.Name()
 	actionableInterface := reflect.TypeOf((*Actionable)(nil)).Elem()
@@ -18,7 +18,7 @@ func (api *API) Actions(table string) (string, aero.Handle) {
 		return "", nil
 	}
 
-	route := api.root + strings.ToLower(objTypeName) + "/:id/:action"
+	route := api.root + strings.ToLower(objTypeName) + "/:id" + action.Route
 	handler := func(ctx *aero.Context) string {
 		objID := ctx.Get("id")
 		obj, err := api.db.Get(objTypeName, objID)
@@ -36,17 +36,10 @@ func (api *API) Actions(table string) (string, aero.Handle) {
 		}
 
 		// Action
-		err = actionable.Action(ctx, ctx.Get("action"))
+		err = action.Run(obj, ctx)
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be updated", err)
-		}
-
-		// Save
-		err = actionable.Save()
-
-		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
 		}
 
 		return "ok"
