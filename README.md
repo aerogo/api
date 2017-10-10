@@ -31,7 +31,7 @@ For the following examples we'll assume you have the type `Movie` registered in 
 
 Fetches the object with the given ID from the database and shows the JSON representation.
 
-Example:
+Example response:
 
 ```json
 {
@@ -44,4 +44,23 @@ If you need to filter out sensitive or private data you can implement the [Filte
 
 ### POST /api/movie/:id
 
-Writes new data to the object with the given ID.
+Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface{}` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object.
+
+Example request:
+
+```json
+{
+	"Title": "The First Samurai"
+}
+```
+
+Alternate example using advanced key paths:
+
+```json
+{
+	"Title": "The First Samurai",
+	"Staff.Director.Name": "Edward Zwick",
+	"Actors[0].Name": "Tom Cruise",
+	"Actors[0].BirthYear": 1962
+}
+```
