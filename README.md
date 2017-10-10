@@ -10,15 +10,18 @@ Automatically implements your REST API.
 myAPI := api.New("/api/", DB)
 ```
 
-First parameter is the root of all your API routes.
+Parameters:
 
-Second parameter is a database handle that fulfills the [Database](Database.go) interface.
+* The root of all your API routes
+* A database handle that fulfills the [Database](Database.go) interface
 
-### Install API routes on an Aero app
+### Install on an Aero app
 
 ```go
 myAPI.Install(app)
 ```
+
+This will register all API routes in the app.
 
 ## Routes
 
@@ -28,7 +31,16 @@ For the following examples we'll assume you have the type `Movie` registered in 
 
 Fetches the object with the given ID from the database and shows the JSON representation.
 
-If you need to filter out sensitive or private data you can implement the [Filter](Filter.go) interface.
+Example:
+
+```json
+{
+	"id": 1,
+	"title": "The Last Samurai"
+}
+```
+
+If you need to filter out sensitive or private data you can implement the [Filter](Filter.go) interface on the data type.
 
 ### POST /api/movie/:id
 
