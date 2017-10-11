@@ -37,7 +37,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 
 		// Authorize
 		editable := obj.(Editable)
-		err = editable.Authorize(ctx)
+		err = editable.Authorize(ctx, "edit")
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)

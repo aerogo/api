@@ -34,7 +34,7 @@ func (api *API) CollectionHandler(objTypeName string, modify CollectionModificat
 		}
 
 		collection := obj.(Collection)
-		err = collection.Authorize(ctx)
+		err = collection.Authorize(ctx, "edit-collection")
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
@@ -169,7 +169,7 @@ func (api *API) RegisterCollection(app *aero.Application, table string) {
 		collection := collectionObj.(Collection)
 
 		// Authorize
-		err = collection.Authorize(ctx)
+		err = collection.Authorize(ctx, "edit-collection-item")
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)

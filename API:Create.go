@@ -24,7 +24,7 @@ func (api *API) Create(table string) (string, aero.Handle) {
 		creatable := obj.(Creatable)
 
 		// Authorize
-		err := creatable.Authorize(ctx)
+		err := creatable.Authorize(ctx, "create")
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
