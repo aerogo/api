@@ -22,8 +22,11 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 
 	customEditableInterface := reflect.TypeOf((*CustomEditable)(nil)).Elem()
 	afterEditableInterface := reflect.TypeOf((*AfterEditable)(nil)).Elem()
+	virtualEditableInterface := reflect.TypeOf((*VirtualEditable)(nil)).Elem()
+
 	usesCustomEdits := reflect.PtrTo(objType).Implements(customEditableInterface)
 	usesAfterEdits := reflect.PtrTo(objType).Implements(afterEditableInterface)
+	usesVirtualEdits := reflect.PtrTo(objType).Implements(virtualEditableInterface)
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id"
 	handler := func(ctx *aero.Context) string {
@@ -51,23 +54,36 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 
 		// Apply changes
 		for key, value := range edits {
+			newValue := reflect.ValueOf(value)
+
+			// Virtual properties
+			if usesVirtualEdits {
+				virtualEditable := editable.(VirtualEditable)
+				consumed, err := virtualEditable.VirtualEdit(ctx, key, newValue)
+
+				if err != nil {
+					return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", err)
+				}
+
+				if consumed {
+					continue
+				}
+			}
+
 			field, _, v, err := mirror.GetProperty(editable, key)
 
 			if err != nil {
-				return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", err)
+				return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", err)
 			}
 
 			// Is somebody attempting to edit fields that aren't editable?
 			if field.Tag.Get("editable") != "true" {
-				return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", errors.New("Field "+key+" is not editable"))
+				return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", errors.New("Field "+key+" is not editable"))
 			}
 
 			if !v.CanSet() {
-				return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", errors.New("Field "+key+" is not settable"))
+				return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", errors.New("Field "+key+" is not settable"))
 			}
-
-			// New value
-			newValue := reflect.ValueOf(value)
 
 			// Special edit
 			if usesCustomEdits {
@@ -75,7 +91,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 				consumed, err := customEditable.Edit(ctx, key, v, newValue)
 
 				if err != nil {
-					return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", err)
+					return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", err)
 				}
 
 				if consumed {
@@ -91,7 +107,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 				if !v.OverflowInt(x) {
 					v.SetInt(x)
 				} else {
-					return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", errors.New("Field "+key+" would cause an integer overflow"))
+					return ctx.Error(http.StatusBadRequest, objTypeName+" "+key+" could not be edited", errors.New("Field "+key+" would cause an integer overflow"))
 				}
 
 			default:
