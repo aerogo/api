@@ -16,10 +16,10 @@ func (api *API) GetField(table string) (string, aero.Handle) {
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
 	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
 
-	route := api.root + strings.ToLower(objTypeName) + "/:id/:property"
+	route := api.root + strings.ToLower(objTypeName) + "/:id/field/:field"
 	handler := func(ctx *aero.Context) string {
 		objID := ctx.Get("id")
-		property := ctx.Get("property")
+		field := ctx.Get("field")
 
 		// Fetch object
 		obj, err := api.db.Get(objTypeName, objID)
@@ -40,11 +40,11 @@ func (api *API) GetField(table string) (string, aero.Handle) {
 		// Allow CORS
 		ctx.SetResponseHeader("Access-Control-Allow-Origin", "*")
 
-		// Get property
-		_, _, value, err := mirror.GetField(obj, property)
+		// Get field
+		_, _, value, err := mirror.GetField(obj, field)
 
 		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "This property does not exist in type "+objTypeName, err)
+			return ctx.Error(http.StatusBadRequest, "This field does not exist in type "+objTypeName, err)
 		}
 
 		return ctx.JSON(value.Interface())

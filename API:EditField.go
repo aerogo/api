@@ -19,10 +19,10 @@ func (api *API) EditField(table string) (string, aero.Handle) {
 		return "", nil
 	}
 
-	route := api.root + strings.ToLower(objTypeName) + "/:id/:property"
+	route := api.root + strings.ToLower(objTypeName) + "/:id/field/:field"
 	handler := func(ctx *aero.Context) string {
 		objID := ctx.Get("id")
-		property := ctx.Get("property")
+		field := ctx.Get("field")
 
 		// Fetch object
 		obj, err := api.db.Get(objTypeName, objID)
@@ -47,18 +47,18 @@ func (api *API) EditField(table string) (string, aero.Handle) {
 		}
 
 		// Get the object that we're editing
-		_, _, value, err := mirror.GetField(obj, property)
+		_, _, fieldValue, err := mirror.GetField(obj, field)
 
 		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "This property does not exist in type "+objTypeName, err)
+			return ctx.Error(http.StatusBadRequest, "This field does not exist in type "+objTypeName, err)
 		}
 
 		// Set properties
-		fieldToEdit := value.Interface().(Editable)
+		fieldToEdit := fieldValue.Interface().(Editable)
 		err = SetObjectProperties(fieldToEdit, edits, ctx)
 
 		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, value.Type().Name()+" could not be edited", err)
+			return ctx.Error(http.StatusInternalServerError, fieldValue.Type().Name()+" could not be edited", err)
 		}
 
 		// Save
