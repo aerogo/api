@@ -6,5 +6,5 @@ import "github.com/aerogo/aero"
 type Updatable interface {
 	Authorizable
 	Savable
-	Update(ctx *aero.Context, data interface{}) error
+	Update(ctx *aero.Context, data map[string]interface{}) error
 }

@@ -39,7 +39,7 @@ func (api *API) Update(table string) (string, aero.Handle) {
 		// Parse body
 		body := ctx.RequestBody()
 
-		var data interface{}
+		var data map[string]interface{}
 		err = json.Unmarshal(body, &data)
 
 		if err != nil {
