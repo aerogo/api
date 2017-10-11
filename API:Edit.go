@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"reflect"
@@ -44,10 +43,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 		}
 
 		// Parse body
-		body := ctx.RequestBody()
-
-		var edits map[string]interface{}
-		err = json.Unmarshal(body, &edits)
+		edits, err := ctx.RequestBodyJSONObject()
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)

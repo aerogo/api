@@ -29,6 +29,8 @@ For the following examples we'll assume you have the type `Movie` registered in 
 
 ### GET /api/movie/:id
 
+Action: `get`
+
 Fetches the object with the given ID from the database and shows the JSON representation.
 
 Example response:
@@ -43,6 +45,8 @@ Example response:
 If you need to filter out sensitive or private data you can implement the [Filter](Filter.go) interface on the data type.
 
 ### POST /api/movie/:id
+
+Action: `edit`
 
 Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface{}` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object. The data type needs to implement the [Editable](Editable.go) interface. Editable fields must be whitelisted with the tag `editable` using the value `true`.
 
@@ -64,3 +68,19 @@ Alternate example using advanced key paths:
 	"Actors[0].BirthYear": 1962
 }
 ```
+
+### POST /api/new/movie
+
+Action: `create`
+
+Create a new object of that data type. The data type needs to implement the [Creatable](Creatable.go) interface to register that route. Usually the post body contains a JSON-formatted key/value map which is used as the initial data for the new object.
+
+Example request:
+```json
+{
+	"title": "The First Samurai",
+	"directorName": "Edward Zwick",
+}
+```
+
+It is up to the developer how the data is interpreted. This API library doesn't make any assumptions about the POST body in `create` requests.
