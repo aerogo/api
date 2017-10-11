@@ -44,7 +44,7 @@ If you need to filter out sensitive or private data you can implement the [Filte
 
 ### POST /api/movie/:id
 
-Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface{}` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object. The data type needs to implement the [Editable](Editable.go) interface.
+Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface{}` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object. The data type needs to implement the [Editable](Editable.go) interface. Editable fields must be whitelisted with the tag `editable` using the value `true`.
 
 Example request:
 
