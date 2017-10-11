@@ -76,7 +76,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 			// Special edit
 			if usesCustomEdits {
 				customEditable := editable.(CustomEditable)
-				consumed, err := customEditable.Edit(key, v, newValue)
+				consumed, err := customEditable.Edit(ctx, key, v, newValue)
 
 				if err != nil {
 					return ctx.Error(http.StatusBadRequest, objTypeName+" could not be edited", err)
