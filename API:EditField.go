@@ -46,15 +46,15 @@ func (api *API) EditField(table string) (string, aero.Handle) {
 			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)
 		}
 
-		// Get the object that we're editing
+		// Get the field that we're editing
 		_, _, fieldValue, err := mirror.GetField(obj, field)
 
 		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "This field does not exist in type "+objTypeName, err)
+			return ctx.Error(http.StatusBadRequest, "Could not find"+field+" in type "+objTypeName, err)
 		}
 
 		// Set properties
-		fieldToEdit := fieldValue.Interface().(Editable)
+		fieldToEdit := fieldValue.Addr().Interface()
 		err = SetObjectProperties(fieldToEdit, edits, ctx)
 
 		if err != nil {

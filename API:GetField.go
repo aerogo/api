@@ -44,7 +44,7 @@ func (api *API) GetField(table string) (string, aero.Handle) {
 		_, _, value, err := mirror.GetField(obj, field)
 
 		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "This field does not exist in type "+objTypeName, err)
+			return ctx.Error(http.StatusBadRequest, "Could not find"+field+" in type "+objTypeName, err)
 		}
 
 		return ctx.JSON(value.Interface())

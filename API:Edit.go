@@ -45,7 +45,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 		}
 
 		// Set properties
-		err = SetObjectProperties(editable, edits, ctx)
+		err = SetObjectProperties(obj, edits, ctx)
 
 		if err != nil {
 			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be edited", err)
@@ -65,8 +65,8 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 }
 
 // SetObjectProperties ...
-func SetObjectProperties(editable Editable, edits map[string]interface{}, ctx *aero.Context) error {
-	objType := reflect.TypeOf(editable)
+func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx *aero.Context) error {
+	objType := reflect.TypeOf(obj)
 
 	customEditableInterface := reflect.TypeOf((*CustomEditable)(nil)).Elem()
 	afterEditableInterface := reflect.TypeOf((*AfterEditable)(nil)).Elem()
@@ -82,7 +82,7 @@ func SetObjectProperties(editable Editable, edits map[string]interface{}, ctx *a
 
 		// Virtual properties
 		if usesVirtualEdits {
-			virtualEditable := editable.(VirtualEditable)
+			virtualEditable := obj.(VirtualEditable)
 			consumed, err := virtualEditable.VirtualEdit(ctx, key, newValue)
 
 			if err != nil {
@@ -94,7 +94,7 @@ func SetObjectProperties(editable Editable, edits map[string]interface{}, ctx *a
 			}
 		}
 
-		field, _, v, err := mirror.GetField(editable, key)
+		field, _, v, err := mirror.GetField(obj, key)
 
 		if err != nil {
 			return err
@@ -111,7 +111,7 @@ func SetObjectProperties(editable Editable, edits map[string]interface{}, ctx *a
 
 		// Special edit
 		if usesCustomEdits {
-			customEditable := editable.(CustomEditable)
+			customEditable := obj.(CustomEditable)
 			consumed, err := customEditable.Edit(ctx, key, v, newValue)
 
 			if err != nil {
@@ -141,7 +141,7 @@ func SetObjectProperties(editable Editable, edits map[string]interface{}, ctx *a
 
 	// AfterEdit
 	if usesAfterEdits {
-		afterEditable := editable.(AfterEditable)
+		afterEditable := obj.(AfterEditable)
 		err := afterEditable.AfterEdit(ctx)
 
 		if err != nil {
