@@ -42,7 +42,7 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 	app.Get(route, handler)
 
 	// Update
-	route, handler = api.Update(table)
+	route, handler = api.Edit(table)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)

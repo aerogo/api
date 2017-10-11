@@ -9,11 +9,11 @@ import (
 	"github.com/aerogo/aero"
 )
 
-// Update ...
-func (api *API) Update(table string) (string, aero.Handle) {
+// Edit ...
+func (api *API) Edit(table string) (string, aero.Handle) {
 	objType := api.db.Type(table)
 	objTypeName := objType.Name()
-	editableInterface := reflect.TypeOf((*Updatable)(nil)).Elem()
+	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 
 	if !reflect.PtrTo(objType).Implements(editableInterface) {
 		return "", nil
@@ -29,7 +29,7 @@ func (api *API) Update(table string) (string, aero.Handle) {
 		}
 
 		// Authorize
-		editable := obj.(Updatable)
+		editable := obj.(Editable)
 		err = editable.Authorize(ctx)
 
 		if err != nil {
@@ -47,7 +47,7 @@ func (api *API) Update(table string) (string, aero.Handle) {
 		}
 
 		// Edit
-		err = editable.Update(ctx, data)
+		err = editable.Edit(ctx, data)
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be updated", err)
