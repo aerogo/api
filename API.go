@@ -42,7 +42,7 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 	app.Get(route, handler)
 
 	// Get property
-	route, handler = api.GetProperty(table)
+	route, handler = api.GetField(table)
 	app.Get(route, handler)
 
 	// Edit
@@ -53,7 +53,7 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 	}
 
 	// Edit property
-	route, handler = api.EditProperty(table)
+	route, handler = api.EditField(table)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)

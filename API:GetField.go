@@ -9,8 +9,8 @@ import (
 	"github.com/aerogo/mirror"
 )
 
-// GetProperty ...
-func (api *API) GetProperty(table string) (string, aero.Handle) {
+// GetField ...
+func (api *API) GetField(table string) (string, aero.Handle) {
 	objType := api.db.Type(table)
 	objTypeName := objType.Name()
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()

@@ -9,8 +9,8 @@ import (
 	"github.com/aerogo/mirror"
 )
 
-// EditProperty ...
-func (api *API) EditProperty(table string) (string, aero.Handle) {
+// EditField ...
+func (api *API) EditField(table string) (string, aero.Handle) {
 	objType := api.db.Type(table)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
