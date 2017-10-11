@@ -41,8 +41,19 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 	route, handler := api.Get(table)
 	app.Get(route, handler)
 
-	// Update
+	// Get property
+	route, handler = api.GetProperty(table)
+	app.Get(route, handler)
+
+	// Edit
 	route, handler = api.Edit(table)
+
+	if route != "" && handler != nil {
+		app.Post(route, handler)
+	}
+
+	// Edit property
+	route, handler = api.EditProperty(table)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
@@ -55,10 +66,10 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 		app.Post(route, handler)
 	}
 
-	// Collections
-	if reflect.PtrTo(objType).Implements(collectionInterface) {
-		api.RegisterCollection(app, table)
-	}
+	// // Collections
+	// if reflect.PtrTo(objType).Implements(collectionInterface) {
+	// 	api.RegisterCollection(app, table)
+	// }
 }
 
 // RegisterAction registers an action for a table.
