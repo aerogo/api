@@ -72,9 +72,9 @@ func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx *aer
 	afterEditableInterface := reflect.TypeOf((*AfterEditable)(nil)).Elem()
 	virtualEditableInterface := reflect.TypeOf((*VirtualEditable)(nil)).Elem()
 
-	usesCustomEdits := reflect.PtrTo(objType).Implements(customEditableInterface)
-	usesAfterEdits := reflect.PtrTo(objType).Implements(afterEditableInterface)
-	usesVirtualEdits := reflect.PtrTo(objType).Implements(virtualEditableInterface)
+	usesCustomEdits := objType.Implements(customEditableInterface)
+	usesAfterEdits := objType.Implements(afterEditableInterface)
+	usesVirtualEdits := objType.Implements(virtualEditableInterface)
 
 	// Apply changes
 	for key, value := range edits {

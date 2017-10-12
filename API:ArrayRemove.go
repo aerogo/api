@@ -60,6 +60,11 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 		// Create a new slice where the removed item does not exist anymore
 		oldLen := arrayValue.Len()
 		newLen := oldLen - 1
+
+		if newLen < 0 {
+			return ctx.Error(http.StatusBadRequest, "Can't remove array element", errors.New("Array is empty"))
+		}
+
 		newSlice := reflect.MakeSlice(arrayType, newLen, newLen)
 
 		offset := 0
