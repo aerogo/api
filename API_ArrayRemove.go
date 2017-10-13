@@ -24,11 +24,7 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 	handler := func(ctx *aero.Context) string {
 		objID := ctx.Get("id")
 		field := ctx.Get("field")
-		index, err := ctx.GetInt("index")
-
-		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "Index needs to be a number", err)
-		}
+		indexString := ctx.Get("index")
 
 		// Fetch object
 		obj, err := api.db.Get(objTypeName, objID)
@@ -55,6 +51,13 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 		// Is the field really a slice?
 		if arrayType.Kind() != reflect.Slice {
 			return ctx.Error(http.StatusBadRequest, "Invalid field", errors.New("Field "+field+" is not a slice"))
+		}
+
+		// Find index
+		_, index, err := mirror.GetSliceElement(arrayValue.Interface(), indexString)
+
+		if err != nil {
+			return ctx.Error(http.StatusBadRequest, "Could not find array element using index "+indexString, err)
 		}
 
 		// Create a new slice where the removed item does not exist anymore
