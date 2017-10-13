@@ -12,16 +12,16 @@ import (
 func (api *API) Create(table string) (string, aero.Handle) {
 	objType := api.db.Type(table)
 	objTypeName := objType.Name()
-	creatableInterface := reflect.TypeOf((*Creatable)(nil)).Elem()
+	creatableInDBInterface := reflect.TypeOf((*Newable)(nil)).Elem()
 
-	if !reflect.PtrTo(objType).Implements(creatableInterface) {
+	if !reflect.PtrTo(objType).Implements(creatableInDBInterface) {
 		return "", nil
 	}
 
 	route := api.root + "new/" + strings.ToLower(objTypeName)
 	handler := func(ctx *aero.Context) string {
 		obj := reflect.New(objType).Interface()
-		creatable := obj.(Creatable)
+		creatable := obj.(Newable)
 
 		// Authorize
 		err := creatable.Authorize(ctx, "create")

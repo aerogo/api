@@ -2,9 +2,7 @@ package api
 
 import "github.com/aerogo/aero"
 
-// Creatable defines an object type where new instances can be created by users.
+// Creatable defines an object that can be created with some initial data.
 type Creatable interface {
-	Savable
-	Authorizable
-	Create(ctx *aero.Context) error
+	Create(*aero.Context) error
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/aerogo/aero"
 )
 
-var collectionInterface = reflect.TypeOf((*Collection)(nil)).Elem()
-
 // API ...
 type API struct {
 	root    string
@@ -79,11 +77,6 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
-
-	// // Collections
-	// if reflect.PtrTo(objType).Implements(collectionInterface) {
-	// 	api.RegisterCollection(app, table)
-	// }
 }
 
 // RegisterAction registers an action for a table.

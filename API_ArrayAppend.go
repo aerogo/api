@@ -40,13 +40,6 @@ func (api *API) ArrayAppend(table string) (string, aero.Handle) {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
 		}
 
-		// Parse body
-		edits, err := ctx.RequestBodyJSONObject()
-
-		if err != nil {
-			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)
-		}
-
 		// Get the field that we're editing
 		_, arrayType, arrayValue, err := mirror.GetField(obj, field)
 
@@ -68,7 +61,13 @@ func (api *API) ArrayAppend(table string) (string, aero.Handle) {
 
 		// Create new item
 		newItem := reflect.New(sliceType)
-		SetObjectProperties(newItem.Interface(), edits, ctx)
+
+		// Call constructor on the new item
+		creatable, isCreatable := newItem.Interface().(Creatable)
+
+		if isCreatable {
+			creatable.Create(ctx)
+		}
 
 		// Append item
 		var newSlice reflect.Value
