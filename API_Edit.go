@@ -38,7 +38,7 @@ func (api *API) Edit(table string) (string, aero.Handle) {
 		}
 
 		// Parse body
-		edits, err := ctx.RequestBodyJSONObject()
+		edits, err := ctx.Request().Body().JSONObject()
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, "Invalid data format (expected JSON)", err)

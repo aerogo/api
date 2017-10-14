@@ -38,7 +38,7 @@ func (api *API) GetField(table string) (string, aero.Handle) {
 		}
 
 		// Allow CORS
-		ctx.SetResponseHeader("Access-Control-Allow-Origin", "*")
+		ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
 
 		// Get field
 		_, _, value, err := mirror.GetField(obj, field)
