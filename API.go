@@ -85,6 +85,10 @@ func (api *API) RegisterAction(action *Action) {
 }
 
 // RegisterActions registers actions for a table.
-func (api *API) RegisterActions(actions []*Action) {
+func (api *API) RegisterActions(table string, actions []*Action) {
+	for _, action := range actions {
+		action.Table = table
+	}
+
 	api.actions = append(api.actions, actions...)
 }
