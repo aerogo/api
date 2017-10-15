@@ -44,7 +44,7 @@ func (api *API) Create(table string) (string, aero.Handle) {
 			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
 		}
 
-		return "ok"
+		return ctx.JSON(obj)
 	}
 
 	return route, handler
