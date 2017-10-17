@@ -57,6 +57,13 @@ func (api *API) RegisterTable(app *aero.Application, table string, objType refle
 		app.Post(route, handler)
 	}
 
+	// Delete
+	route, handler = api.Delete(table)
+
+	if route != "" && handler != nil {
+		app.Post(route, handler)
+	}
+
 	// Append array element
 	route, handler = api.ArrayAppend(table)
 
