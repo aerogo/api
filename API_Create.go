@@ -10,7 +10,7 @@ import (
 
 // Create ...
 func (api *API) Create(table string) (string, aero.Handle) {
-	objType := api.db.Type(table)
+	objType := api.Type(table)
 	objTypeName := objType.Name()
 	creatableInDBInterface := reflect.TypeOf((*Newable)(nil)).Elem()
 
@@ -38,11 +38,7 @@ func (api *API) Create(table string) (string, aero.Handle) {
 		}
 
 		// Save
-		err = creatable.Save()
-
-		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
-		}
+		creatable.Save()
 
 		return ctx.JSON(obj)
 	}

@@ -11,7 +11,7 @@ import (
 
 // GetField ...
 func (api *API) GetField(table string) (string, aero.Handle) {
-	objType := api.db.Type(table)
+	objType := api.Type(table)
 	objTypeName := objType.Name()
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
 	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)

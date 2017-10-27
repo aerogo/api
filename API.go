@@ -99,3 +99,8 @@ func (api *API) RegisterActions(table string, actions []*Action) {
 
 	api.actions = append(api.actions, actions...)
 }
+
+// Type ...
+func (api *API) Type(table string) reflect.Type {
+	return api.db.Types()[table]
+}

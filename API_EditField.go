@@ -11,7 +11,7 @@ import (
 
 // EditField ...
 func (api *API) EditField(table string) (string, aero.Handle) {
-	objType := api.db.Type(table)
+	objType := api.Type(table)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 
@@ -62,11 +62,7 @@ func (api *API) EditField(table string) (string, aero.Handle) {
 		}
 
 		// Save
-		err = editable.Save()
-
-		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
-		}
+		editable.Save()
 
 		return "ok"
 	}

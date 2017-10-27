@@ -12,7 +12,7 @@ import (
 
 // ArrayRemove ...
 func (api *API) ArrayRemove(table string) (string, aero.Handle) {
-	objType := api.db.Type(table)
+	objType := api.Type(table)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 
@@ -82,11 +82,7 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 		arrayValue.Set(newSlice)
 
 		// Save
-		err = editable.Save()
-
-		if err != nil {
-			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be saved", err)
-		}
+		editable.Save()
 
 		return "ok"
 	}

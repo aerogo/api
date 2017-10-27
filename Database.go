@@ -5,8 +5,7 @@ import "reflect"
 // Database ...
 type Database interface {
 	Get(table string, id string) (interface{}, error)
-	Set(table string, id string, obj interface{}) error
-	Delete(table string, id string) (existed bool, err error)
-	Type(table string) reflect.Type
+	Set(table string, id string, obj interface{})
+	Delete(table string, id string) bool
 	Types() map[string]reflect.Type
 }

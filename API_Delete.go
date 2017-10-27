@@ -10,7 +10,7 @@ import (
 
 // Delete ...
 func (api *API) Delete(table string) (string, aero.Handle) {
-	objType := api.db.Type(table)
+	objType := api.Type(table)
 	objTypeName := objType.Name()
 	deletableInterface := reflect.TypeOf((*Deletable)(nil)).Elem()
 
