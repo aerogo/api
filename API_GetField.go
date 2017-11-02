@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"reflect"
 	"strings"
 
 	"github.com/aerogo/aero"
@@ -13,8 +12,8 @@ import (
 func (api *API) GetField(table string) (string, aero.Handle) {
 	objType := api.Type(table)
 	objTypeName := objType.Name()
-	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
-	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
+	// filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
+	// filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id/field/:field"
 	handler := func(ctx *aero.Context) string {
@@ -28,14 +27,14 @@ func (api *API) GetField(table string) (string, aero.Handle) {
 			return ctx.Error(http.StatusNotFound, "Not found", err)
 		}
 
-		// Remove private data
-		if filterEnabled {
-			filter := obj.(Filter)
+		// // Remove private data
+		// if filterEnabled {
+		// 	filter := obj.(Filter)
 
-			if filter.ShouldFilter(ctx) {
-				filter.Filter()
-			}
-		}
+		// 	if filter.ShouldFilter(ctx) {
+		// 		filter.Filter()
+		// 	}
+		// }
 
 		// Allow CORS
 		ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
