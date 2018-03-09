@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -19,7 +20,16 @@ func (api *API) Create(table string) (string, aero.Handle) {
 	}
 
 	route := api.root + "new/" + strings.ToLower(objTypeName)
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx *aero.Context) (body string) {
+		// Recover from panics
+		defer func() {
+			if r := recover(); r != nil {
+				err := r.(error)
+				fmt.Println("Recovered panic in", ctx.URI())
+				body = ctx.Error(http.StatusInternalServerError, "Server error", err)
+			}
+		}()
+
 		obj := reflect.New(objType).Interface()
 		creatable := obj.(Newable)
 
