@@ -36,7 +36,7 @@ func (api *API) Delete(table string) (string, aero.Handle) {
 		}
 
 		// Delete
-		err = deletable.Delete()
+		err = deletable.DeleteInContext(ctx)
 
 		if err != nil {
 			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be deleted", err)
