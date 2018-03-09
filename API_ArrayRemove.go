@@ -54,7 +54,7 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 		}
 
 		// Find index
-		_, index, err := mirror.GetSliceElement(arrayValue.Interface(), indexString)
+		value, index, err := mirror.GetSliceElement(arrayValue.Interface(), indexString)
 
 		if err != nil {
 			return ctx.Error(http.StatusBadRequest, "Could not find array element using index "+indexString, err)
@@ -80,6 +80,13 @@ func (api *API) ArrayRemove(table string) (string, aero.Handle) {
 		}
 
 		arrayValue.Set(newSlice)
+
+		// Call OnRemove
+		listener, isRemoveListener := obj.(ArrayEventListener)
+
+		if isRemoveListener {
+			listener.OnRemove(ctx, field, index, value.Interface())
+		}
 
 		// Save
 		editable.Save()

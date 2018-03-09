@@ -80,6 +80,13 @@ func (api *API) ArrayAppend(table string) (string, aero.Handle) {
 
 		arrayValue.Set(newSlice)
 
+		// Call OnAppend
+		listener, isAppendListener := obj.(ArrayEventListener)
+
+		if isAppendListener {
+			listener.OnAppend(ctx, field, newSlice.Len()-1, newItem.Elem().Interface())
+		}
+
 		// Save
 		editable.Save()
 
