@@ -29,7 +29,7 @@ func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
 
 		// Authorize
 		actionable := obj.(Actionable)
-		err = actionable.Authorize(ctx, "action")
+		err = actionable.Authorize(ctx, action.Name)
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)
