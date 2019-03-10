@@ -105,6 +105,10 @@ func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx *aer
 			return errors.New("Field " + key + " is not settable")
 		}
 
+		if !v.IsValid() {
+			return errors.New("Field " + key + " has an invalid value")
+		}
+
 		// Special edit
 		if usesCustomEdits {
 			customEditable := obj.(CustomEditable)
