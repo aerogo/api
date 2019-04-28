@@ -123,6 +123,12 @@ func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx *aer
 			}
 		}
 
+		// In case it was not consumed, the value might have been altered.
+		// Check it again, to be safe.
+		if !v.CanSet() || !v.IsValid() {
+			return errors.New("Field " + key + " has an invalid value")
+		}
+
 		// Implement special data type cases here
 		switch v.Kind() {
 		case reflect.Int:
