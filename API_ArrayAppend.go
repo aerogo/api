@@ -66,7 +66,11 @@ func (api *API) ArrayAppend(table string) (string, aero.Handle) {
 		creatable, isCreatable := newItem.Interface().(Creatable)
 
 		if isCreatable {
-			creatable.Create(ctx)
+			err = creatable.Create(ctx)
+
+			if err != nil {
+				return ctx.Error(http.StatusBadRequest, "Could not create a new "+objTypeName, err)
+			}
 		}
 
 		// Append item
