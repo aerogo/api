@@ -1,5 +1,11 @@
 # api
 
+[![Godoc][godoc-image]][godoc-url]
+[![Report][report-image]][report-url]
+[![Tests][tests-image]][tests-url]
+[![Coverage][coverage-image]][coverage-url]
+[![Patreon][patreon-image]][patreon-url]
+
 Automatically implements your REST API.
 
 ## Usage
@@ -36,10 +42,7 @@ Fetches the object with the given ID from the database and shows the JSON repres
 Example response:
 
 ```json
-{
-	"id": 1,
-	"title": "The Last Samurai"
-}
+
 ```
 
 If you need to filter out sensitive or private data you can implement the [Filter](Filter.go) interface on the data type.
@@ -48,25 +51,18 @@ If you need to filter out sensitive or private data you can implement the [Filte
 
 Action: `edit`
 
-Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface{}` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object. The data type needs to implement the [Editable](Editable.go) interface. Editable fields must be whitelisted with the tag `editable` using the value `true`.
+Writes new data to the object with the given ID. The data needs to be a JSON-formatted `map[string]interface` where each key stands for a [path to a field](https://github.com/aerogo/mirror#getproperty) of this object. The data type needs to implement the [Editable](Editable.go) interface. Editable fields must be whitelisted with the tag `editable` using the value `true`.
 
 Example request:
 
 ```json
-{
-	"Title": "The First Samurai"
-}
+
 ```
 
 Alternate example using advanced key paths:
 
 ```json
-{
-	"Title": "The First Samurai",
-	"Staff.Director.Name": "Edward Zwick",
-	"Actors[0].Name": "Tom Cruise",
-	"Actors[0].BirthYear": 1962
-}
+
 ```
 
 ### POST /api/new/movie
@@ -76,11 +72,38 @@ Action: `create`
 Create a new object of that data type. The data type needs to implement the [Creatable](Creatable.go) interface to register that route. Usually the post body contains a JSON-formatted key/value map which is used as the initial data for the new object.
 
 Example request:
+
 ```json
-{
-	"title": "The First Samurai",
-	"directorName": "Edward Zwick",
-}
+
 ```
 
 It is up to the developer how the data is interpreted. This API library doesn't make any assumptions about the POST body in `create` requests.
+
+## Coding style
+
+Please take a look at the [style guidelines](https://github.com/akyoto/quality/blob/master/STYLE.md) if you'd like to make a pull request.
+
+## Patrons
+
+| [![Scott Rayapoullé](https://avatars3.githubusercontent.com/u/11772084?s=70&v=4)](https://github.com/soulcramer) |
+|---|
+| [Scott Rayapoullé](https://github.com/soulcramer) |
+
+Want to see [your own name here](https://www.patreon.com/eduardurbach)?
+
+## Author
+
+| [![Eduard Urbach on Twitter](https://gravatar.com/avatar/16ed4d41a5f244d1b10de1b791657989?s=70)](https://twitter.com/eduardurbach "Follow @eduardurbach on Twitter") |
+|---|
+| [Eduard Urbach](https://eduardurbach.com) |
+
+[godoc-image]: https://godoc.org/github.com/aerogo/api?status.svg
+[godoc-url]: https://godoc.org/github.com/aerogo/api
+[report-image]: https://goreportcard.com/badge/github.com/aerogo/api
+[report-url]: https://goreportcard.com/report/github.com/aerogo/api
+[tests-image]: https://cloud.drone.io/api/badges/aerogo/api/status.svg
+[tests-url]: https://cloud.drone.io/aerogo/api
+[coverage-image]: https://codecov.io/gh/aerogo/api/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/aerogo/api
+[patreon-image]: https://img.shields.io/badge/patreon-donate-green.svg
+[patreon-url]: https://www.patreon.com/eduardurbach
