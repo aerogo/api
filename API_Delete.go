@@ -9,8 +9,8 @@ import (
 )
 
 // Delete ...
-func (api *API) Delete(table string) (string, aero.Handle) {
-	objType := api.Type(table)
+func (api *API) Delete(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	deletableInterface := reflect.TypeOf((*Deletable)(nil)).Elem()
 

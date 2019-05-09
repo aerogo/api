@@ -11,8 +11,8 @@ import (
 )
 
 // ArrayAppend ...
-func (api *API) ArrayAppend(table string) (string, aero.Handle) {
-	objType := api.Type(table)
+func (api *API) ArrayAppend(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 

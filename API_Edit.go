@@ -11,8 +11,8 @@ import (
 )
 
 // Edit ...
-func (api *API) Edit(table string) (string, aero.Handle) {
-	objType := api.Type(table)
+func (api *API) Edit(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 

@@ -10,8 +10,8 @@ import (
 )
 
 // Create ...
-func (api *API) Create(table string) (string, aero.Handle) {
-	objType := api.Type(table)
+func (api *API) Create(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	creatableInDBInterface := reflect.TypeOf((*Newable)(nil)).Elem()
 

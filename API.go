@@ -6,10 +6,15 @@ import (
 	"github.com/aerogo/aero"
 )
 
-// API ...
+// API represents your application's API configuration.
 type API struct {
-	root    string
-	db      Database
+	// The base endpoint for all API requests.
+	root string
+
+	// The database used.
+	db Database
+
+	// An internal list of registered actions.
 	actions []*Action
 }
 
@@ -21,10 +26,10 @@ func New(root string, db Database) *API {
 	}
 }
 
-// Install ...
+// Install installs the REST & GraphQL API to your webserver at the given endpoint.
 func (api *API) Install(app *aero.Application) {
-	for table, objType := range api.db.Types() {
-		api.RegisterTable(app, table, objType)
+	for collection, typ := range api.db.Types() {
+		api.RegisterCollection(app, collection, typ)
 	}
 
 	for _, action := range api.actions {
@@ -33,74 +38,74 @@ func (api *API) Install(app *aero.Application) {
 	}
 }
 
-// RegisterTable registers a single table.
-func (api *API) RegisterTable(app *aero.Application, table string, objType reflect.Type) {
+// RegisterCollection registers a single collection.
+func (api *API) RegisterCollection(app *aero.Application, collection string, objType reflect.Type) {
 	// Get
-	route, handler := api.Get(table)
+	route, handler := api.Get(collection)
 	app.Get(route, handler)
 
 	// Get property
-	route, handler = api.GetField(table)
+	route, handler = api.GetField(collection)
 	app.Get(route, handler)
 
 	// Edit
-	route, handler = api.Edit(table)
+	route, handler = api.Edit(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 
 	// Edit property
-	route, handler = api.EditField(table)
+	route, handler = api.EditField(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 
 	// Delete
-	route, handler = api.Delete(table)
+	route, handler = api.Delete(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 
 	// Append array element
-	route, handler = api.ArrayAppend(table)
+	route, handler = api.ArrayAppend(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 
 	// Remove array element
-	route, handler = api.ArrayRemove(table)
+	route, handler = api.ArrayRemove(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 
 	// Create
-	route, handler = api.Create(table)
+	route, handler = api.Create(collection)
 
 	if route != "" && handler != nil {
 		app.Post(route, handler)
 	}
 }
 
-// RegisterAction registers an action for a table.
+// RegisterAction registers an action for a collection.
 func (api *API) RegisterAction(action *Action) {
 	api.actions = append(api.actions, action)
 }
 
-// RegisterActions registers actions for a table.
-func (api *API) RegisterActions(table string, actions []*Action) {
+// RegisterActions registers actions for a collection.
+func (api *API) RegisterActions(collection string, actions []*Action) {
 	for _, action := range actions {
-		action.Table = table
+		action.Collection = collection
 	}
 
 	api.actions = append(api.actions, actions...)
 }
 
 // Type ...
-func (api *API) Type(table string) reflect.Type {
-	return api.db.Types()[table]
+func (api *API) Type(collection string) reflect.Type {
+	return api.db.Types()[collection]
 }

@@ -10,7 +10,7 @@ import (
 
 // ActionHandler ...
 func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
-	objType := api.Type(action.Table)
+	objType := api.Type(action.Collection)
 	objTypeName := objType.Name()
 	actionableInterface := reflect.TypeOf((*Actionable)(nil)).Elem()
 

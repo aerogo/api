@@ -10,25 +10,25 @@ import (
 	"github.com/aerogo/aero"
 )
 
-// Get ...
-func (api *API) Get(table string) (string, aero.Handle) {
-	objType := api.Type(table)
-	objTypeName := objType.Name()
+// Get returns the route and the handler for the given collection.
+func (api *API) Get(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
+	typeName := objType.Name()
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
 	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
+	route := api.root + strings.ToLower(typeName) + "/:id"
 
-	route := api.root + strings.ToLower(objTypeName) + "/:id"
 	handler := func(ctx *aero.Context) string {
-		objID := ctx.Get("id")
+		id := ctx.Get("id")
 
 		// Fetch object
-		obj, err := api.db.Get(objTypeName, objID)
+		obj, err := api.db.Get(typeName, id)
 
 		if err != nil {
 			return ctx.Error(http.StatusNotFound, "Not found", err)
 		}
 
-		// // Remove private data
+		// Remove private data
 		if filterEnabled {
 			obj = deepcopy.Copy(obj)
 			filter := obj.(Filter)
@@ -41,6 +41,7 @@ func (api *API) Get(table string) (string, aero.Handle) {
 		// Allow CORS
 		ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
 
+		// Respond with JSON
 		return ctx.JSON(obj)
 	}
 

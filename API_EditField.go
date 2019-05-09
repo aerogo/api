@@ -10,8 +10,8 @@ import (
 )
 
 // EditField ...
-func (api *API) EditField(table string) (string, aero.Handle) {
-	objType := api.Type(table)
+func (api *API) EditField(collection string) (string, aero.Handle) {
+	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
 

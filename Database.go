@@ -2,10 +2,10 @@ package api
 
 import "reflect"
 
-// Database ...
+// Database is an interface for any kind of database.
 type Database interface {
-	Get(table string, id string) (interface{}, error)
-	Set(table string, id string, obj interface{})
-	Delete(table string, id string) bool
+	Get(collection string, id string) (interface{}, error)
+	Set(collection string, id string, obj interface{})
+	Delete(collection string, id string) bool
 	Types() map[string]reflect.Type
 }
