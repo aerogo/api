@@ -9,7 +9,7 @@ import (
 )
 
 // Delete ...
-func (api *API) Delete(collection string) (string, aero.Handle) {
+func (api *API) Delete(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	deletableInterface := reflect.TypeOf((*Deletable)(nil)).Elem()
@@ -19,7 +19,7 @@ func (api *API) Delete(collection string) (string, aero.Handle) {
 	}
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id/delete"
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		objID := ctx.Get("id")
 		obj, err := api.db.Get(objTypeName, objID)
 
@@ -42,7 +42,7 @@ func (api *API) Delete(collection string) (string, aero.Handle) {
 			return ctx.Error(http.StatusInternalServerError, objTypeName+" could not be deleted", err)
 		}
 
-		return "ok"
+		return ctx.String("ok")
 	}
 
 	return route, handler

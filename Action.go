@@ -7,5 +7,5 @@ type Action struct {
 	Collection string
 	Name       string
 	Route      string
-	Run        func(obj interface{}, ctx *aero.Context) error
+	Run        func(obj interface{}, ctx aero.Context) error
 }

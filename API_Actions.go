@@ -9,7 +9,7 @@ import (
 )
 
 // ActionHandler ...
-func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
+func (api *API) ActionHandler(action *Action) (string, aero.Handler) {
 	objType := api.Type(action.Collection)
 	objTypeName := objType.Name()
 	actionableInterface := reflect.TypeOf((*Actionable)(nil)).Elem()
@@ -19,7 +19,7 @@ func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
 	}
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id" + action.Route
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		objID := ctx.Get("id")
 		obj, err := api.db.Get(objTypeName, objID)
 
@@ -42,7 +42,7 @@ func (api *API) ActionHandler(action *Action) (string, aero.Handle) {
 			return ctx.Error(http.StatusBadRequest, objTypeName+" could not be updated", err)
 		}
 
-		return "ok"
+		return ctx.String("ok")
 	}
 
 	return route, handler

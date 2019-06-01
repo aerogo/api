@@ -11,14 +11,14 @@ import (
 )
 
 // Get returns the route and the handler for the given collection.
-func (api *API) Get(collection string) (string, aero.Handle) {
+func (api *API) Get(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	typeName := objType.Name()
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
 	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
 	route := api.root + strings.ToLower(typeName) + "/:id"
 
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		id := ctx.Get("id")
 
 		// Fetch object
@@ -39,7 +39,7 @@ func (api *API) Get(collection string) (string, aero.Handle) {
 		}
 
 		// Allow CORS
-		ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Response().SetHeader("Access-Control-Allow-Origin", "*")
 
 		// Respond with JSON
 		return ctx.JSON(obj)

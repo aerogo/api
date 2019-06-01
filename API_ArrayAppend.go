@@ -11,7 +11,7 @@ import (
 )
 
 // ArrayAppend ...
-func (api *API) ArrayAppend(collection string) (string, aero.Handle) {
+func (api *API) ArrayAppend(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
@@ -21,7 +21,7 @@ func (api *API) ArrayAppend(collection string) (string, aero.Handle) {
 	}
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id/field/:field/append"
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		objID := ctx.Get("id")
 		field := ctx.Get("field")
 
@@ -94,7 +94,7 @@ func (api *API) ArrayAppend(collection string) (string, aero.Handle) {
 		// Save
 		editable.Save()
 
-		return "ok"
+		return ctx.String("ok")
 	}
 
 	return route, handler

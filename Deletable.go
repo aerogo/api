@@ -7,6 +7,6 @@ import (
 // Deletable defines an object type that can be deleted from the database.
 type Deletable interface {
 	Authorizable
-	DeleteInContext(*aero.Context) error
+	DeleteInContext(aero.Context) error
 	Delete() error
 }

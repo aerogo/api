@@ -10,7 +10,7 @@ import (
 )
 
 // Create ...
-func (api *API) Create(collection string) (string, aero.Handle) {
+func (api *API) Create(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	creatableInDBInterface := reflect.TypeOf((*Newable)(nil)).Elem()
@@ -20,13 +20,13 @@ func (api *API) Create(collection string) (string, aero.Handle) {
 	}
 
 	route := api.root + "new/" + strings.ToLower(objTypeName)
-	handler := func(ctx *aero.Context) (body string) {
+	handler := func(ctx aero.Context) (err error) {
 		// Recover from panics
 		defer func() {
 			if r := recover(); r != nil {
-				err := r.(error)
-				fmt.Println("Recovered panic in", ctx.URI())
-				body = ctx.Error(http.StatusInternalServerError, "Server error", err)
+				err = r.(error)
+				fmt.Println("Recovered panic in", ctx.Path())
+				err = ctx.Error(http.StatusInternalServerError, "Server error", err)
 			}
 		}()
 
@@ -34,7 +34,7 @@ func (api *API) Create(collection string) (string, aero.Handle) {
 		creatable := obj.(Newable)
 
 		// Authorize
-		err := creatable.Authorize(ctx, "create")
+		err = creatable.Authorize(ctx, "create")
 
 		if err != nil {
 			return ctx.Error(http.StatusForbidden, "Not authorized", err)

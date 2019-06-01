@@ -11,7 +11,7 @@ import (
 )
 
 // Edit ...
-func (api *API) Edit(collection string) (string, aero.Handle) {
+func (api *API) Edit(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	editableInterface := reflect.TypeOf((*Editable)(nil)).Elem()
@@ -21,7 +21,7 @@ func (api *API) Edit(collection string) (string, aero.Handle) {
 	}
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id"
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		objID := ctx.Get("id")
 		obj, err := api.db.Get(objTypeName, objID)
 
@@ -54,14 +54,14 @@ func (api *API) Edit(collection string) (string, aero.Handle) {
 		// Save
 		editable.Save()
 
-		return "ok"
+		return ctx.String("ok")
 	}
 
 	return route, handler
 }
 
 // SetObjectProperties ...
-func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx *aero.Context) error {
+func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx aero.Context) error {
 	objType := reflect.TypeOf(obj)
 
 	customEditableInterface := reflect.TypeOf((*CustomEditable)(nil)).Elem()

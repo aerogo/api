@@ -12,14 +12,14 @@ import (
 )
 
 // GetField ...
-func (api *API) GetField(collection string) (string, aero.Handle) {
+func (api *API) GetField(collection string) (string, aero.Handler) {
 	objType := api.Type(collection)
 	objTypeName := objType.Name()
 	filterInterface := reflect.TypeOf((*Filter)(nil)).Elem()
 	filterEnabled := reflect.PtrTo(objType).Implements(filterInterface)
 
 	route := api.root + strings.ToLower(objTypeName) + "/:id/field/:field"
-	handler := func(ctx *aero.Context) string {
+	handler := func(ctx aero.Context) error {
 		objID := ctx.Get("id")
 		field := ctx.Get("field")
 
@@ -41,7 +41,7 @@ func (api *API) GetField(collection string) (string, aero.Handle) {
 		}
 
 		// Allow CORS
-		ctx.Response().Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Response().SetHeader("Access-Control-Allow-Origin", "*")
 
 		// Get field
 		_, _, value, err := mirror.GetField(obj, field)
