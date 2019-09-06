@@ -131,7 +131,7 @@ func SetObjectProperties(obj interface{}, edits map[string]interface{}, ctx aero
 
 		// Implement special data type cases here
 		switch v.Kind() {
-		case reflect.Int:
+		case reflect.Int, reflect.Int64:
 			x := int64(newValue.Float())
 
 			if !v.OverflowInt(x) {
